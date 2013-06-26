@@ -1,11 +1,27 @@
 mbtiles-server
 ==============
 
-Wow. It's really easy to serve mbtiles files without having to host them with Mapbox, just serve them yourself.
+This is a fork of Christopher Helm's awesome [mbtiles-server](https://github.com/chelm/mbtiles-server) with a few modifications:
 
-First, just create an mbtiles file (via Tilemill probably cause it's freaking amazing), then:
+* It uses `path` to make the directory to the tiles, so the slash direction will be correct on Windows or Linux/Mac.
+* It sets a variable for the location of the .mbtiles, in case you want to stick them somewhere else.
+* You pass the name of the .mbtiles without the extension as the first route parameter (`http://localhost:3000/<mbtiles name>/{y}/{x}/{z}.png`), so the server can be used to serve more than 1 tileset.
+* Added
 
 1. `npm install`
-1. `node server.js [tilefile]`
+2. `node server.js`
 
-Visit [http://localhost:3000/3/1/2.png](http://localhost:3000/3/1/2.png)
+Visit http://localhost:3000/<mbtiles-name>/3/1/2.png.
+
+If you're on Windows and want to install it as a service, first you'll need to install the node-windows plugin.
+
+`npm install node-windows`
+
+Then to install the server as a service:
+
+`node windows-install-service.js`
+
+To remove the service:
+
+`node windows-remove-service.js`
+

@@ -1,14 +1,17 @@
 {
-    "name": "mbtile-server"
-  , "description": "A crazy simple mbtiles server in node"
-  , "version": "0.0.1"
-  , "private": false
-  , "author": "Chris Helm"
-  , "dependencies": {
-    "express": "*"
-    , "mbtiles": "*"
-  }
-  , "engines": {
-    "node": "0.8.x"
-  }
+  "name": "tiles",
+  "version": "0.0.0",
+  "description": "",
+  "main": "tileserver.js",
+  "dependencies": {
+    "express": "*",
+    "mbtiles": "*"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "",
+  "license": "BSD"
 }
