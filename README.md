@@ -6,7 +6,7 @@ This is a fork of Christopher Helm's awesome [mbtiles-server](https://github.com
 * It uses `path` to make the directory to the tiles, so the slash direction will be correct on Windows or Linux/Mac.
 * It sets a variable for the location of the .mbtiles, in case you want to stick them somewhere else.
 * You pass the name of the .mbtiles without the extension as the first route parameter (`http://localhost:3000/<mbtiles name>/{y}/{x}/{z}.png`), so the server can be used to serve more than 1 tileset.
-* Added
+* Added some scripts to create/remove a Windows service for the server.
 
 1. `npm install`
 2. `node server.js`
