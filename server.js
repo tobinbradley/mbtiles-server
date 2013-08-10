@@ -8,7 +8,7 @@ var express = require("express"),
 var tilesDir = __dirname;
 
 
-app.get('/:s/:y/:x/:z.*', function(req, res) {
+app.get('/:s/:z/:x/:y.*', function(req, res) {
     new MBTiles(p.join(tilesDir, req.param('s') + '.mbtiles'), function(err, mbtiles) {
         mbtiles.getTile(req.param('z'), req.param('x'), req.param('y'), function(err, tile, headers) {
             if (err) {
