@@ -6,7 +6,6 @@ var express = require("express"),
 // path to the mbtiles; default is the server.js directory
 var tilesDir = __dirname;
 
-
 app.get('/:s/:z/:x/:y.*', function(req, res) {
     new MBTiles(p.join(tilesDir, req.param('s') + '.mbtiles'), function(err, mbtiles) {
         mbtiles.getTile(req.param('z'), req.param('x'), req.param('y'), function(err, tile, headers) {
