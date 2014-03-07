@@ -5,6 +5,6 @@
 # Then stick this in:
 # @reboot /path/to/starter.sh
 # make sure that starter.sh is executable (chmod +x starter.sh)
+# Also, run which on forever and node to make sure your paths are correct
 
-cd /opt/apps/tiles
-forever start server.js
+/usr/local/bin/forever start -c /usr/bin/node /opt/apps/tiles/server.js
