@@ -11,7 +11,7 @@ This is a fork of Christopher Helm's awesome [mbtiles-server](https://github.com
 1. `npm install`
 2. `node server.js`
 
-Visit http://localhost:3000/<mbtiles-name>/3/1/2.png.
+Try out index.html by dragging it to your browser. Tiles will end up looking like http://localhost:3000/<mbtiles-name>/3/1/2.png.
 
 If you're on Windows and want to install it as a service, first you'll need to install the node-windows plugin.
 
@@ -24,4 +24,3 @@ Then to install the server as a service:
 To remove the service:
 
 `node windows-remove-service.js`
-
