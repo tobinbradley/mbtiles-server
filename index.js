@@ -15,7 +15,7 @@ function getContentType(t) {
   header["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept";
 
   // Cache
-  //header["Cache-Control"] = "public, max-age=2592000";
+  header["Cache-Control"] = "public, max-age=604800";
 
   // request specific headers
   if (t === "png") {
@@ -37,7 +37,11 @@ app.get('/:s/:z/:x/:y.:t', function(req, res) {
   new MBTiles(p.join(tilesDir, req.params.s + '.mbtiles'), function(err, mbtiles) {
     mbtiles.getTile(req.params.z, req.params.x, req.params.y, function(err, tile, headers) {
       if (err) {
-        res.set({"Content-Type": "text/plain"});
+        let header = {};
+        header["Access-Control-Allow-Origin"] = "*";
+        header["Access-Control-Allow-Headers"] = "Origin, X-Requested-With, Content-Type, Accept";
+        header["Content-Type"] = "text/plain";
+        res.set(header);
         res.status(404).send('Tile rendering error: ' + err + '\n');
       } else {
         res.set(getContentType(req.params.t));
