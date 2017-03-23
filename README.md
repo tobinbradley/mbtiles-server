@@ -11,7 +11,7 @@ To get it cranking, drop a mbtiles file in the server folder and:
 
 ``` bash
 npm install
-node server.js
+node index.js
 ```
 
 Requests look like this:
