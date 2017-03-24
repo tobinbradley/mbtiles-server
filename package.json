@@ -2,7 +2,7 @@
   "name": "tiles",
   "version": "0.0.0",
   "description": "",
-  "main": "tileserver.js",
+  "main": "index.js",
   "dependencies": {
     "express": "*",
     "mbtiles": "*"
