@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "express": "*",
-    "mbtiles": "*"
+    "express": "^4.15.2",
+    "mbtiles": "^0.9.0"
   },
   "devDependencies": {},
   "scripts": {
