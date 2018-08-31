@@ -1,6 +1,6 @@
 var express = require("express"),
   app = express(),
-  MBTiles = require("mbtiles"),
+  MBTiles = require("@mapbox/mbtiles"),
   p = require("path"),
   fs = require("fs");
 
@@ -38,16 +38,15 @@ function getContentType(t) {
 function errorHeader() {
   return {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers":
-      "Origin, X-Requested-With, Content-Type, Accept",
+    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
     "Content-Type": "text/plain"
   };
 }
 
 // tile cannon
-app.get("/:s/:z/:x/:y.:t", function(req, res) {
+app.get("/:s/:z/:x/:y.:t", function (req, res) {
   if (fs.existsSync(req.params.s + ".mbtiles")) {
-    new MBTiles(p.join(tilesDir, req.params.s + ".mbtiles"), function(
+    new MBTiles(p.join(tilesDir, req.params.s + ".mbtiles"), function (
       err,
       mbtiles
     ) {
@@ -56,7 +55,7 @@ app.get("/:s/:z/:x/:y.:t", function(req, res) {
         res.set(errorHeader());
         res.status(404).send("Error opening database: " + err + "\n");
       } else {
-        mbtiles.getTile(req.params.z, req.params.x, req.params.y, function(
+        mbtiles.getTile(req.params.z, req.params.x, req.params.y, function (
           err,
           tile,
           headers
