@@ -1,83 +1,80 @@
-var express = require("express"),
-  app = express(),
-  MBTiles = require("@mapbox/mbtiles"),
-  p = require("path"),
-  fs = require("fs");
+const fastify = require('fastify')({ logger: false })
+const sqlite3 = require('sqlite3')
+const tiletype = require('@mapbox/tiletype')
+const path = require('path')
+const glob = require('glob')
+const tilesDir = __dirname // directory to read mbtiles files
+const port = 3000 // port the server runs on
 
-// path to the mbtiles; default is the server.js directory
-var tilesDir = __dirname;
+// fastify extensions
+fastify.register(require('fastify-caching'), {
+  privacy: 'private',
+  expiresIn: 60 * 60 * 24 // 48 hours
+})
+fastify.register(require('fastify-cors'))
 
-// Set return header
-function getContentType(t) {
-  var header = {};
-
-  // CORS
-  header["Access-Control-Allow-Origin"] = "*";
-  header["Access-Control-Allow-Headers"] =
-    "Origin, X-Requested-With, Content-Type, Accept";
-
-  // Cache
-  header["Cache-Control"] = "public, max-age=604800";
-
-  // request specific headers
-  if (t === "png") {
-    header["Content-Type"] = "image/png";
-  }
-  if (t === "jpg" || t === "jpeg") {
-    header["Content-Type"] = "image/jpeg";
-  }
-  if (t === "pbf") {
-    header["Content-Type"] = "application/x-protobuf";
-    header["Content-Encoding"] = "gzip";
-  }
-
-  return header;
-}
-
-// header for error responses
-function errorHeader() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept",
-    "Content-Type": "text/plain"
-  };
-}
-
-// tile cannon
-app.get("/:s/:z/:x/:y.:t", function (req, res) {
-  if (fs.existsSync(req.params.s + ".mbtiles")) {
-    new MBTiles(p.join(tilesDir, req.params.s + ".mbtiles"), function (
-      err,
-      mbtiles
-    ) {
+// Tile
+fastify.get('/:database/:z/:x/:y', async (request, reply) => {
+  const db = new sqlite3.cached.Database(
+    path.join(tilesDir, request.params.database),
+    sqlite3.OPEN_READONLY,
+    err => {
       if (err) {
-        // Database read error
-        res.set(errorHeader());
-        res.status(404).send("Error opening database: " + err + "\n");
-      } else {
-        mbtiles.getTile(req.params.z, req.params.x, req.params.y, function (
-          err,
-          tile,
-          headers
-        ) {
-          if (err) {
-            // Tile read error
-            res.set(errorHeader());
-            res.status(404).send("Tile rendering error: " + err + "\n");
-          } else {
-            res.set(getContentType(req.params.t));
-            res.send(tile);
-          }
-        });
+        reply.code(404).send('Error opening database: ' + err + '\n')
       }
-    });
-  } else {
-    // Database not found error
-    res.set(errorHeader());
-    res.status(404).send("MBTILES database not found.");
-  }
-});
+    }
+  )
+  db.get(
+    'SELECT tile_data FROM tiles WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?',
+    [
+      request.params.z,
+      request.params.x,
+      (1 << request.params.z) - 1 - request.params.y
+    ],
+    function(err, row) {
+      if (err) {
+        reply.code(500).send('Tile rendering error: ' + err + '\n')
+      }
+      if (!row) {
+        reply.code(204).send()
+      }
+      Object.entries(tiletype.headers(row.tile_data)).forEach(h =>
+        reply.header(h[0], h[1])
+      )
+      reply.send(row.tile_data)
+    }
+  )
+})
 
-// start up the server
-console.log("Listening on port: " + 3000);
-app.listen(3000);
+// MBtiles meta route
+fastify.get('/:database/meta', async (request, reply) => {
+  const db = new sqlite3.cached.Database(
+    path.join(tilesDir, request.params.database),
+    sqlite3.OPEN_READONLY,
+    err => {
+      if (err) {
+        reply.code(404).send('Error opening database: ' + err + '\n')
+      }
+    }
+  )
+  db.all('SELECT name, value FROM metadata', function(err, rows) {
+    if (err) {
+      reply.code(500).send('Error fetching metadata: ' + err + '\n')
+    }
+    if (!rows) {
+      reply.code(204).send('No metadata present')
+    }
+    reply.send(rows)
+  })
+})
+
+// MBtiles list
+fastify.get('/list', async (request, reply) => {
+  glob(tilesDir + '/*.mbtiles', {}, (err, files) => {
+    reply.send(files.map(file => path.basename(file)))
+  })
+})
+
+// Run the server!
+fastify.listen(port)
+console.log(`tile server listening on port ${port}`)

@@ -1,24 +1,44 @@
 # mbtiles-server
 
-This is a fork of Christopher Helm's awesome [mbtiles-server](https://github.com/chelm/mbtiles-server). All credit should be flung at him. The changes in this fork are:
+A dirt simple tiles server for [MBTiles](https://github.com/mapbox/mbtiles-spec) files. It can serve image and vector tiles, and multiple MBTiles files can be served.
 
-- The first path argument is the mbtiles file, so multiple mbtiles tile sets can be served with the same service.
-- Vector tiles are supported.
-- Some niceties on the return header (CORS, expiration, etc.).
+## Get Started
 
-To get it cranking, drop a mbtiles file in the server folder and:
-
-```bash
+```sh
 npm install
-node index.js
+npm start
 ```
 
-If you are on Windows and `npm install` comes back with a compilation error, try running `npm install -g windows-build-tools` first.
+## Routes
 
-Requests look like this:
+### List Available Tile Sets
 
 ```text
-http://localhost:3000/<mbtiles-name>/3/1/2.png
+http://localhost:3000/list
 ```
 
-Note the extension on the end. As `mbtiles-server` supports raster and vector MBTILES files, it needs the extension to determine the type of file you're requesting. _Make sure you use the correct extension for your tile set._
+### Show Available Meta for Tile Set
+
+```text
+http://localhost:3000/[mbtiles file]/meta
+```
+
+Ex: http://localhost:3000/tiles.mbtiles/meta
+
+### Fetch a Tile
+
+```text
+http://localhost:3000/[mbtiles file]/[z]/[x]/[y]
+```
+
+Ex: http://localhost:3000/tiles.mbtiles/12/1128/1620
+
+## Notes
+
+`index.js` contains two variables - `tilesDir` and `port` - the set the directory to find MBTiles files and the server port respectively. The defaults are the server's folder and port 3000.
+
+The [Fastify](https://www.fastify.io/) extensions [fastify-caching](https://github.com/fastify/fastify-caching) and [fastify-cors](https://github.com/fastify/fastify-cors) are used to set tile expiration (in seconds) and CORS. By default, expiration is 48 hours and CORS is set to `access-control-allow-origin: *`. See the Fastify projects to learn how to customize those options further.
+
+If you are on Windows and `npm install` returns a compilation error, try running `npm install -g windows-build-tools` first.
+
+This tile server was originally inspired by Christopher Helm's awesome [mbtiles-server](https://github.com/chelm/mbtiles-server).
