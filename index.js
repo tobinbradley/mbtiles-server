@@ -15,8 +15,15 @@ fastify.register(require('fastify-cors'))
 
 // Tile
 fastify.get('/:database/:z/:x/:y', async (request, reply) => {
+  // make it compatible with the old API
+  const database =
+    path.extname(request.params.database) === '.mbtiles'
+      ? request.params.database
+      : request.params.database + '.mbtiles'
+  const y = path.parse(request.params.y).name
+
   const db = new sqlite3.cached.Database(
-    path.join(tilesDir, request.params.database),
+    path.join(tilesDir, database),
     sqlite3.OPEN_READONLY,
     err => {
       if (err) {
@@ -29,7 +36,7 @@ fastify.get('/:database/:z/:x/:y', async (request, reply) => {
     [
       request.params.z,
       request.params.x,
-      (1 << request.params.z) - 1 - request.params.y
+      (1 << request.params.z) - 1 - y
     ],
     function(err, row) {
       if (err) {
