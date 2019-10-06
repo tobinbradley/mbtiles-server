@@ -42,13 +42,15 @@ fastify.get('/:database/:z/:x/:y', async (request, reply) => {
       if (err) {
         reply.code(500).send('Tile rendering error: ' + err + '\n')
       }
-      if (!row) {
+      else if (!row) {
         reply.code(204).send()
       }
-      Object.entries(tiletype.headers(row.tile_data)).forEach(h =>
-        reply.header(h[0], h[1])
-      )
-      reply.send(row.tile_data)
+      else {
+        Object.entries(tiletype.headers(row.tile_data)).forEach(h =>
+          reply.header(h[0], h[1])
+        )
+        reply.send(row.tile_data)
+      }
     }
   )
 })
@@ -68,10 +70,12 @@ fastify.get('/:database/meta', async (request, reply) => {
     if (err) {
       reply.code(500).send('Error fetching metadata: ' + err + '\n')
     }
-    if (!rows) {
+    else if (!rows) {
       reply.code(204).send('No metadata present')
     }
-    reply.send(rows)
+    else {
+      reply.send(rows)
+    }
   })
 })
 
