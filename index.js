@@ -53,6 +53,7 @@ fastify.get('/:database/:z/:x/:y', async (request, reply) => {
       }
     }
   )
+  return reply
 })
 
 // MBtiles meta route
@@ -77,6 +78,7 @@ fastify.get('/:database/meta', async (request, reply) => {
       reply.send(rows)
     }
   })
+  return reply
 })
 
 // MBtiles list
