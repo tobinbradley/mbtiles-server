@@ -5,6 +5,7 @@ const path = require('path')
 const glob = require('glob')
 const tilesDir = __dirname // directory to read mbtiles files
 const port = 3000 // port the server runs on
+const host = 'localhost' // default listen address
 
 // fastify extensions
 fastify.register(require('fastify-caching'), {
@@ -87,5 +88,5 @@ fastify.get('/list', async (request, reply) => {
 })
 
 // Run the server!
-fastify.listen(port)
+fastify.listen(port, host)
 console.log(`tile server listening on port ${port}`)

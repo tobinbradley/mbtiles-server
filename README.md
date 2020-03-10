@@ -41,4 +41,6 @@ The [Fastify](https://www.fastify.io/) extensions [fastify-caching](https://gith
 
 If you are on Windows and `npm install` returns a compilation error, try running `npm install -g windows-build-tools` first.
 
+By default, Fastify only listens to requests from `localhost` for security reasons. You can change the `host` constant in `index.js` to `0.0.0.0` to listen to all IPv4 addresses. See the [Fastify listen docs](https://www.fastify.io/docs/latest/Server/#listen) for more details.
+
 This tile server was originally inspired by Christopher Helm's awesome [mbtiles-server](https://github.com/chelm/mbtiles-server).
