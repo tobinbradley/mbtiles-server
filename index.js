@@ -15,7 +15,7 @@ fastify.register(require('fastify-caching'), {
 fastify.register(require('fastify-cors'))
 
 // Tile
-fastify.get('/:database/:z/:x/:y', async (request, reply) => {
+fastify.get('/:database/:z/:x/:y', (request, reply) => {
   // make it compatible with the old API
   const database =
     path.extname(request.params.database) === '.mbtiles'
@@ -57,7 +57,7 @@ fastify.get('/:database/:z/:x/:y', async (request, reply) => {
 })
 
 // MBtiles meta route
-fastify.get('/:database/meta', async (request, reply) => {
+fastify.get('/:database/meta', (request, reply) => {
   const db = new sqlite3.cached.Database(
     path.join(tilesDir, request.params.database),
     sqlite3.OPEN_READONLY,
@@ -81,7 +81,7 @@ fastify.get('/:database/meta', async (request, reply) => {
 })
 
 // MBtiles list
-fastify.get('/list', async (request, reply) => {
+fastify.get('/list', (request, reply) => {
   glob(tilesDir + '/*.mbtiles', {}, (err, files) => {
     reply.send(files.map(file => path.basename(file)))
   })
