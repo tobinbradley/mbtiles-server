@@ -67,7 +67,7 @@ fastify.get('/:database/meta', (request, reply) => {
       }
     }
   )
-  db.all('SELECT name, value FROM metadata', function(err, rows) {
+  db.all(`SELECT name, value FROM metadata where name in ('name', 'attribution','bounds','center', 'description', 'maxzoom', 'minzoom', 'pixel_scale', 'format')`, function(err, rows) {
     if (err) {
       reply.code(500).send('Error fetching metadata: ' + err + '\n')
     }
